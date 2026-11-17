@@ -4,12 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Landing Page</title>
-    <!-- لینک به کتابخانه Pico.css برای استایل‌دهی خودکار -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
 </head>
 <body>
     
-    <!-- منوی بالای صفحه برای جابه‌جایی بین بخش‌ها -->
     <nav class="container">
         <ul>
             <li><strong>My Project</strong></li>
@@ -18,59 +16,84 @@
             <li><a href="#home">Home</a></li>
             <li><a href="#about">About Us</a></li>
             <li><a href="#forms">Forms</a></li>
-            <li><a href="#auth">Sign In</a></li>
+            <!-- اگر کاربر لاگین باشد، لینک خروج، وگرنه لینک ورود نشان داده می‌شود -->
+            {% if user %}
+                <li><a href="#user-detail">My Profile</a></li>
+                <li><a href="/signout" role="button" class="secondary">Sign Out</a></li>
+            {% else %}
+                <li><a href="#auth">Sign In</a></li>
+            {% endif %}
         </ul>
     </nav>
 
-    <!-- محتوای اصلی صفحه -->
     <main class="container">
         
-        <!-- 1. Home Section -->
         <section id="home">
             <h1>Welcome to Our Landing Page</h1>
             <p>This is a clean, minimal single-page project built with Flask and Pico.css.</p>
             <hr>
         </section>
 
-        <!-- 2. About Us Section -->
         <section id="about">
             <h2>About Us</h2>
-            <p>Welcome to my first full-stack project! This landing page was built from scratch using Python, Flask, and Pico.css. The goal of this project is to practice backend routing, form handling, and deploying a web app to a public IP using Git and Cloudflare Tunnel.</p>
-            <p>Everything you see here is developed step-by-step as part of my learning journey.</p>
+            <p>Welcome to my first full-stack project! This landing page was built from scratch using Python, Flask, and Pico.css.</p>
             <hr>
         </section>
 
-        <!-- 3. Forms Section -->
         <section id="forms">
             <h2>Contact Form</h2>
-            <p>Fill out the form below to send us a message.</p>
-            <!-- فرم ارسال اطلاعات به روت submit-form در بک‌اند -->
             <form action="/submit-form" method="POST">
                 <label for="name">Name</label>
-                <input type="text" id="name" name="name" placeholder="Your Name" required>
-                
+                <input type="text" id="name" name="name" required>
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="your@email.com" required>
-                
+                <input type="email" id="email" name="email" required>
                 <label for="message">Message</label>
-                <textarea id="message" name="message" placeholder="Write your message here..." rows="3" required></textarea>
-                
+                <textarea id="message" name="message" rows="3" required></textarea>
                 <button type="submit">Send Message</button>
             </form>
             <hr>
         </section>
 
-        <!-- 4. Auth Section (Sign In / Sign Out) -->
+        <!-- بخش احراز هویت -->
         <section id="auth">
-            <h2>Sign In</h2>
-            <p>This is a placeholder for the Sign In/Out forms. We will build this in the next step.</p>
+            <h2>Account</h2>
+            {% if user %}
+                <!-- اگر لاگین باشد، این را می‌بیند -->
+                <p>You are currently logged in as <strong>{{ user }}</strong>.</p>
+                <p>You can now view your profile details below or sign out using the top menu.</p>
+            {% else %}
+                <!-- اگر لاگین نباشد، فرم ورود/ثبت‌نام را می‌بیند -->
+                <form action="/signin" method="POST">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                    
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                    
+                    <div class="grid">
+                        <!-- دو دکمه داریم که مقدار action را متفاوت می‌فرستند -->
+                        <button type="submit" name="action" value="login">Sign In</button>
+                        <button type="submit" name="action" value="register" class="secondary">Register New Account</button>
+                    </div>
+                </form>
+            {% endif %}
             <hr>
         </section>
 
-        <!-- 5. User Detail Section -->
+        <!-- بخش جزئیات کاربر -->
         <section id="user-detail">
             <h2>User Details</h2>
-            <p>This section will only be visible when a user is logged in.</p>
+            {% if user %}
+                <!-- فقط اگر لاگین باشد این اطلاعات را می‌بیند -->
+                <article>
+                    <header><strong>Profile Information</strong></header>
+                    <p><strong>Email:</strong> {{ user }}</p>
+                    <p>Welcome to your private dashboard. This information is only visible to you because you are authenticated.</p>
+                </article>
+            {% else %}
+                <!-- اگر لاگین نباشد -->
+                <p>This section is restricted. Please sign in to view your details.</p>
+            {% endif %}
         </section>
 
     </main>
